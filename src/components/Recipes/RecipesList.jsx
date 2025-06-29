@@ -1,3 +1,99 @@
-export default function Home() {
-  return <h1>레시피 리스트 페이지입니다.</h1>;
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import RecipeCard from '../common/RecipeCard';
+
+export default function RecipesList() {
+  const navigate = useNavigate();
+  const [recipes, setRecipes] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [newTitle, setnewTitle] = useState("");
+  const [newDescription, setnewDescription] = useState("");
+  
+
+
+  const token = localStorage.getItem("token")
+
+  useEffect(() => {
+    fetch("http://localhost:5000/recipes")
+    .then(res => res.json())
+    .then(data => setRecipes(data));
+  }, []);
+
+  const startEditing = (recipe) => {
+    setEditingId(recipe.id);
+    setnewTitle(recipe.title);
+    setnewDescription(recipe.description);
+  }
+
+  const handleDelete = (id) => {
+    fetch(`http://localhost:5000/recipes/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+      setRecipes(recipes.filter(r => r.id !== id));
+    });
+  };
+
+
+const handleUpdate = () => {
+  fetch(`http://localhost:5000/recipes/${editingId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      title: newTitle,
+      description: newDescription
+    })
+  })
+
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+    setRecipes(
+      recipes.map(r =>
+        r.id === editingId ? { ...r, title: newTitle, description: newDescription } : r
+      )
+    );
+    setEditingId(null);
+  });
+};
+
+  return (
+    <div>
+      <h1>Recipes List</h1>
+
+      <button onClick={() => navigate("/recipes/add")}>+add recipe</button>
+      {recipes.map(r =>(
+        <div key={r.id}>
+          <h2>{r.title}</h2>
+          <p>{r.description}</p>
+          <button onClick={() => startEditing(r)}>Edit</button>
+          <button onClick={() => handleDelete(r.id)}>Delete</button>
+        </div>
+      ))}
+
+      {editingId && (
+        <div>
+          <h3>Edit Recipe</h3>
+          <input
+          value={newTitle}
+          onChange={e => setnewTitle(e.target.value)}
+          />
+          <textarea
+          value={newDescription}
+          onChange={e => setnewDescription(e.target.value)}
+          />
+          <button onClick={handleUpdate}>Save</button>
+          <button onClick={() => setEditingId(null)}>Cancel</button>
+        </div>
+      )}
+    </div>
+  );
 }

@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Login from './components/Login';
 import Header from './components/common/Header';
-import RecipeList from './components/Recipes/RecipesList';
+import RecipesList from './components/Recipes/RecipesList';
 import RecipeDetail from './components/Recipes/RecipeDetail';
 import AddRecipe from './components/Recipes/AddRecipe';
 import Fridge from './components/Fridge/Fridge';
@@ -20,9 +20,9 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/recipes" element={<RecipeList />} />
+        <Route path="/recipes" element={<RecipesList />} />
+        <Route path="/recipes/add" element={<AddRecipe />} />
         <Route path="/recipes/:id" element={<RecipeDetail />} />
-        <Route path="/recieps/add" element={<AddRecipe />} />
         <Route path="/fridge" element={<Fridge />} />
         <Route path="/calendar" element={<Calender />} />
         <Route path="/Feedback" element={<Feedback />} />
