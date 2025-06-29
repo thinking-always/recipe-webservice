@@ -1,12 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import "./Header.css";
+
 
 export default function Home() {
     const navigate = useNavigate();
   return (
-    <header style={{ padding: "1rem", background: "#eee"}}>
+    <header className="header">
         <h1>Header</h1>
-        <button
-        onClick={() => navigate("/recipes")}>전체 레시피 보기</button>
+        <Link to="/">Home</Link>
+        <Link to="/recipes">Recipes</Link>
+        <Link to="/fridge">Fridge</Link>
+        <Link to="/calendar">Calendar</Link>
+        <Link to="/feedback">Feedback</Link>
+
     </header>
   );
 }

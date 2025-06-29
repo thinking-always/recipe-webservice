@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RecipeCard from '../common/RecipeCard';
+import './RecipesList.css';
 
 export default function RecipesList() {
   const navigate = useNavigate();
@@ -8,15 +9,15 @@ export default function RecipesList() {
   const [editingId, setEditingId] = useState(null);
   const [newTitle, setnewTitle] = useState("");
   const [newDescription, setnewDescription] = useState("");
-  
+
 
 
   const token = localStorage.getItem("token")
 
   useEffect(() => {
     fetch("http://localhost:5000/recipes")
-    .then(res => res.json())
-    .then(data => setRecipes(data));
+      .then(res => res.json())
+      .then(data => setRecipes(data));
   }, []);
 
   const startEditing = (recipe) => {
@@ -32,63 +33,66 @@ export default function RecipesList() {
         Authorization: `Bearer ${token}`
       }
     })
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-      setRecipes(recipes.filter(r => r.id !== id));
-    });
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        setRecipes(recipes.filter(r => r.id !== id));
+      });
   };
 
 
-const handleUpdate = () => {
-  fetch(`http://localhost:5000/recipes/${editingId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({
-      title: newTitle,
-      description: newDescription
+  const handleUpdate = () => {
+    fetch(`http://localhost:5000/recipes/${editingId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        title: newTitle,
+        description: newDescription
+      })
     })
-  })
 
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
-    setRecipes(
-      recipes.map(r =>
-        r.id === editingId ? { ...r, title: newTitle, description: newDescription } : r
-      )
-    );
-    setEditingId(null);
-  });
-};
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        setRecipes(
+          recipes.map(r =>
+            r.id === editingId ? { ...r, title: newTitle, description: newDescription } : r
+          )
+        );
+        setEditingId(null);
+      });
+  };
 
   return (
-    <div>
+    <div className="recipe-page">
       <h1>Recipes List</h1>
-
       <button onClick={() => navigate("/recipes/add")}>+add recipe</button>
-      {recipes.map(r =>(
-        <div key={r.id}>
-          <h2>{r.title}</h2>
-          <p>{r.description}</p>
-          <button onClick={() => startEditing(r)}>Edit</button>
-          <button onClick={() => handleDelete(r.id)}>Delete</button>
-        </div>
-      ))}
+      <div className="cards">
+        {recipes.map(r => (
+          <div className="recipe-card" key={r.id}>
+            <h2>{r.title}</h2>
+            <p>{r.description}</p>
+            <div className="recipe-card-buttons">
+              <button onClick={() => startEditing(r)}>Edit</button>
+              <button onClick={() => handleDelete(r.id)}>Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {editingId && (
         <div>
           <h3>Edit Recipe</h3>
           <input
-          value={newTitle}
-          onChange={e => setnewTitle(e.target.value)}
+            value={newTitle}
+            onChange={e => setnewTitle(e.target.value)}
           />
           <textarea
-          value={newDescription}
-          onChange={e => setnewDescription(e.target.value)}
+            value={newDescription}
+            onChange={e => setnewDescription(e.target.value)}
           />
           <button onClick={handleUpdate}>Save</button>
           <button onClick={() => setEditingId(null)}>Cancel</button>
