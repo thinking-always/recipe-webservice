@@ -3,6 +3,8 @@ from flask_cors import CORS, cross_origin
 from flask import request, jsonify
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity,verify_jwt_in_request
 from flask_sqlalchemy import SQLAlchemy
+import os
+import uuid
 
 app = Flask(__name__)
 
@@ -16,33 +18,88 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 @app.route("/")
 def home():
     return "Hello, backend!"
 
+import uuid
+
 @app.route("/recipes", methods=["POST"])
-@cross_origin()
-@jwt_required()
-def add_recipe():
-    print("JWT:", get_jwt_identity())
+def create_recipe():
+    title = request.form.get("title")
+    description = request.form.get("description")
+    cover_image = request.files.get("coverImage")
 
-    data = request.get_json()
+    step_images = request.files.getlist("stepImages")
+    step_texts = request.form.getlist("stepTexts")
 
-    title = data.get("title")
-    description = data.get("description")
+    print("Title:", title)
+    print("Description:", description)
+    print("CoverImage:", cover_image)
+    print("StepImages:", step_images)
+    print("StepTexts:", step_texts)
 
-    new_recipe = Recipe(title=title, description=description)
-    
+    # ✅ 대표 이미지 저장
+    cover_image_path = None
+    if cover_image:
+        filename = f"{uuid.uuid4().hex}_{cover_image.filename}"
+        cover_image.save(os.path.join(UPLOAD_FOLDER, filename))
+        cover_image_path = filename
+
+    # ✅ Recipe 객체 생성
+    new_recipe = Recipe(
+        title=title,
+        description=description,
+        cover_image_path=cover_image_path
+    )
     db.session.add(new_recipe)
+    db.session.commit()  # 먼저 커밋해야 ID 생성됨
+
+    # ✅ 스텝들 저장
+    for i, text in enumerate(step_texts):
+        step_image = step_images[i] if i < len(step_images) else None
+
+        image_path = None
+        if step_image:
+            step_filename = f"{uuid.uuid4().hex}_{step_image.filename}"
+            step_image.save(os.path.join(UPLOAD_FOLDER, step_filename))
+            image_path = step_filename
+
+        step = Step(
+            recipe_id=new_recipe.id,
+            step_number=i + 1,
+            image_path=image_path,
+            text=text
+        )
+        db.session.add(step)
 
     db.session.commit()
 
     return jsonify({
         "success": True,
-        "id": new_recipe.id,
-        "title": new_recipe.title,
-        "description": new_recipe.description
-    }), 201
+        "message": "Recipe saved!"
+    })
+
+
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    likes = db.Column(db.Integer, default=0)
+    cover_image_path = db.Column(db.String(200))
+
+    steps= db.relationship('Step', backref='recipe', cascade='all, delete-orphan')
+
+class Step(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+    step_number = db.Column(db.Integer, nullable=False)
+    image_path = db.Column(db.String(255))
+    text = db.Column(db.Text)
+
 
 @app.route('/recipes', methods=['GET'])
 def get_recipes():
@@ -74,11 +131,7 @@ def login():
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token)
 
-class Recipe(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    likes = db.Column(db.Integer, default=0)
+
 
 @app.route('/recipes/<int:id>', methods=["PUT"])
 @cross_origin()
