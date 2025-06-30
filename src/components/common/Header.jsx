@@ -12,6 +12,7 @@ export default function Home() {
         <Link to="/fridge">Fridge</Link>
         <Link to="/calendar">Calendar</Link>
         <Link to="/feedback">Feedback</Link>
+        <Link to="/login">Login</Link>
 
     </header>
   );

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS, cross_origin
 from flask import request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity,verify_jwt_in_request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -78,6 +78,7 @@ class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    likes = db.Column(db.Integer, default=0)
 
 @app.route('/recipes/<int:id>', methods=["PUT"])
 @cross_origin()
@@ -113,6 +114,54 @@ def delete_recipe(id):
     db.session.commit()
 
     return jsonify({"msg": f"Deleted recipe {id}"})
+
+@app.route('/recipes/<int:id>/like', methods=["POST", "OPTIONS"])
+@cross_origin()
+def like_recipe(id):
+    if request.method == "OPTIONS":
+        return '', 200 #preflight ok
+    
+    verify_jwt_in_request()
+    current_user = get_jwt_identity()
+    
+
+    recipe = Recipe.query.get(id)
+    if not recipe:
+        return jsonify({"msg":"Recipe not found"}), 404
+    
+    recipe.likes += 1
+    db.session.commit()
+
+    return jsonify({
+        "msg": f"Liked recipe {id}",
+        "likes": recipe.likes
+    })
+
+@app.route("/recipes/popular", methods=["GET"])
+def popular_recipe():
+    recipes = Recipe.query.order_by(Recipe.likes.desc()).limit(6).all()
+    output = []
+    for r in recipes:
+        output.append({
+            "id": r.id,
+            "title": r.title,
+            "description": r.description,
+            "likes": r.likes
+        })
+    return jsonify(output)
+
+@app.route('/recipes/latest')
+def get_latest_recipes():
+    recipes = Recipe.query.order_by(Recipe.id.desc()).limit(6).all()
+    result=[]
+    for recipe in recipes:
+        result.append({
+            "id": recipe.id,
+            "title": recipe.title,
+            "description": recipe.description,
+        })
+
+    return jsonify(result)
 
 
 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RecipeCard from '../common/RecipeCard';
 import './RecipesList.css';
 
 export default function RecipesList() {
@@ -10,9 +9,7 @@ export default function RecipesList() {
   const [newTitle, setnewTitle] = useState("");
   const [newDescription, setnewDescription] = useState("");
 
-
-
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetch("http://localhost:5000/recipes")
@@ -24,7 +21,7 @@ export default function RecipesList() {
     setEditingId(recipe.id);
     setnewTitle(recipe.title);
     setnewDescription(recipe.description);
-  }
+  };
 
   const handleDelete = (id) => {
     fetch(`http://localhost:5000/recipes/${id}`, {
@@ -35,11 +32,10 @@ export default function RecipesList() {
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        console.log("Deleted:", data);
         setRecipes(recipes.filter(r => r.id !== id));
       });
   };
-
 
   const handleUpdate = () => {
     fetch(`http://localhost:5000/recipes/${editingId}`, {
@@ -53,10 +49,9 @@ export default function RecipesList() {
         description: newDescription
       })
     })
-
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        console.log("Updated:", data);
         setRecipes(
           recipes.map(r =>
             r.id === editingId ? { ...r, title: newTitle, description: newDescription } : r
@@ -66,16 +61,42 @@ export default function RecipesList() {
       });
   };
 
+  const handleLike = (id) => {
+    const liked = localStorage.getItem(`liked_${id}`);
+    if (liked) {
+      alert("이미 좋아요를 눌렀습니다.");
+      return;
+    }
+
+    fetch(`http://localhost:5000/recipes/${id}/like`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Liked:", data);
+        localStorage.setItem(`liked_${id}`, "true");
+        setRecipes(
+          recipes.map(r =>
+            r.id === id ? { ...r, likes: data.likes } : r
+          )
+        );
+      });
+  };
+
   return (
     <div className="recipe-page">
       <h1>Recipes List</h1>
-      <button onClick={() => navigate("/recipes/add")}>+add recipe</button>
+      <button onClick={() => navigate("/recipes/add")}>+ Add Recipe</button>
       <div className="cards">
         {recipes.map(r => (
           <div className="recipe-card" key={r.id}>
             <h2>{r.title}</h2>
             <p>{r.description}</p>
             <div className="recipe-card-buttons">
+              <button onClick={() => handleLike(r.id)}>❤️ {r.likes ?? 0}</button>
               <button onClick={() => startEditing(r)}>Edit</button>
               <button onClick={() => handleDelete(r.id)}>Delete</button>
             </div>
