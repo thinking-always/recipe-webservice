@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import './Home.css'
-
+import { Link } from "react-router-dom"
 
 export default function Home() {
   const [popular, setPopular] = useState([]);
@@ -26,25 +26,32 @@ export default function Home() {
             <p>인기 메뉴 불러오는 중...</p>
           ) : (
             popular.map(recipe => (
-              <div key={recipe.id} className="recipe-card">
+              <Link
+                key={recipe.id}
+                to={`/recipes/${recipe.id}`}
+                className="recipe-card">
                 <h3>{recipe.title}</h3>
                 <p>{recipe.description}</p>
                 <p>Likes:{recipe.likes}</p>
-              </div>
+              </Link>
+
             ))
           )}
         </div>
 
         <h2> latest menus </h2>
-        <div className="popular-list">
+        <div className="latest-list">
           {latest.length === 0 ? (
             <p> not found latest menus </p>
           ) : (
             latest.map(recipe => (
-              <div key={recipe.id} className="recipe-card">
+              <Link
+                key={recipe.id}
+                to={`/recipes/${recipe.id}`}
+                className="recipe-card">
                 <h3>{recipe.title}</h3>
                 <p>{recipe.description}</p>
-              </div>
+              </Link>
             ))
           )}
         </div>

@@ -1,41 +1,47 @@
-.banners {
-    display: flex;
-    flex-direction: column;
-
+/* 카드 리스트: 가로 배치 예시 */
+.popular-list,
+.latest-list {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
 }
 
-.popular-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-    overflow-x: auto;
-}
-
+/* Link 자체를 카드로 */
 .recipe-card {
-    height: 100px;
-    display: flex;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 8px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-    max-width: 350px;
-    max-height: 350px;
+  display: flex;
+  flex-direction: column;   /* 내용 세로 쌓기 */
+  justify-content: space-between;
 
+  width: 250px;             /* 카드 폭 고정 */
+  min-height: 200px;        /* 높이 최소값 */
+  background: #fff;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  text-decoration: none;    /* Link 밑줄 제거 */
+  color: inherit;           /* Link 기본 글자색 상속 */
 }
 
 .recipe-card:hover {
-    transform: translateY(-15px);
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .recipe-card h3 {
-    margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
 }
 
 .recipe-card p {
-    margin: 0.25rem 0;
-    color: #555;
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
 }
 

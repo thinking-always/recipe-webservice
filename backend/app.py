@@ -163,6 +163,18 @@ def get_latest_recipes():
 
     return jsonify(result)
 
+@app.route("/recipes/<int:id>")
+def get_recipe(id):
+    recipe = Recipe.query.get_or_404(id)
+    return jsonify({
+        "id": recipe.id,
+        "title": recipe.title,
+        "description": recipe.description,
+        "likes": recipe.likes
+
+    })
+
+
 
 
 if __name__ == "__main__":
