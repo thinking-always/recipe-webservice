@@ -1,0 +1,40 @@
+from  flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, timezone
+
+db = SQLAlchemy()
+
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    likes = db.Column(db.Integer, default=0)
+    cover_image_path = db.Column(db.String(200))
+    steps = db.relationship('Step', backref='recipe', cascade='all, delete-orphan')
+
+class Step(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+    step_number = db.Column(db.Integer, nullable=False)
+    image_path = db.Column(db.String(255))
+    text = db.Column(db.Text)
+
+class FridgeItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    quantity = db.Column(db.Float, nullable=False)  # 정수/소수 모두 가능
+    unit = db.Column(db.String(20), nullable=False) # 단위
+    expiry_date = db.Column(db.Date, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'quantity': self.quantity,
+            'unit': self.unit,
+            'expiry_date': self.expiry_date.isoformat() if self.expiry_date else None,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
