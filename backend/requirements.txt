@@ -1,3 +1,5 @@
-flask
-flask-cors
-flask-jwt-extended
+Flask
+Flask-Cors
+Flask-JWT-Extended
+Flask-SQLAlchemy
+Werkzeug
