@@ -1,5 +1,6 @@
-Flask
-Flask-Cors
-
-Flask-SQLAlchemy
-Werkzeug
+Flask==3.1.1
+flask-cors==6.0.1
+Flask-JWT-Extended==4.7.1
+Flask-SQLAlchemy==3.1.1
+gunicorn==23.0.0
+python-dotenv==1.1.1
