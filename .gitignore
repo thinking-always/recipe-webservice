@@ -31,3 +31,9 @@ venv/
 # Node/React
 node_modules/
 build/
+
+node_modules/
+__pycache__/
+*.pyc
+.env
+uploads/
