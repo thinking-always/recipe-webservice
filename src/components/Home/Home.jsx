@@ -6,12 +6,14 @@ export default function Home() {
   const [popular, setPopular] = useState([]);
   const [latest, setLatest] = useState([]);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+  
   useEffect(() => {
-    fetch("http://localhost:5000/recipes/popular")
+    fetch(`${API_URL}/recipes/popular`)
       .then(res => res.json())
       .then(data => setPopular(data));
 
-    fetch("http://localhost:5000/recipes/latest")
+    fetch(`${API_URL}/recipes/latest`)
       .then(res => res.json())
       .then(data => setLatest(data));
   }, []);

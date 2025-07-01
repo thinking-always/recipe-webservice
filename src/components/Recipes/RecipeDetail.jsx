@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 export default function RecipeDetail() {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    fetch(`http://localhost:5000/recipes/${id}`)
+    fetch(`${API_URL}/recipes/${id}`)
       .then(res => res.json())
       .then(data => setRecipe(data));
   }, [id]);

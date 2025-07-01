@@ -13,20 +13,20 @@ export default function RecipesList() {
   const [newStepText, setNewStepText] = useState("");
   const [newStepImage, setNewStepImage] = useState(null);
 
-
+  const API_URL = process.env.REACT_APP_API_URL;
 
 
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:5000/recipes")
+    fetch(`${API_URL}/recipes`)
       .then(res => res.json())
       .then(data => setRecipes(data));
   }, []);
 
   useEffect(() => {
     if (editingId) {
-      fetch(`http://localhost:5000/recipes/${editingId}`)
+      fetch(`${API_URL}/recipes/${editingId}`)
         .then(res => res.json())
         .then(data => {
           setNewTitle(data.title);
@@ -46,7 +46,7 @@ export default function RecipesList() {
   };
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:5000/recipes/${id}`, {
+    fetch(`${API_URL}/recipes/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`
@@ -78,7 +78,7 @@ export default function RecipesList() {
     });
 
 
-    fetch(`http://localhost:5000/recipes/${editingId}`, {
+    fetch(`${API_URL}/recipes/${editingId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`
@@ -104,7 +104,7 @@ export default function RecipesList() {
       return;
     }
 
-    fetch(`http://localhost:5000/recipes/${id}/like`, {
+    fetch(`${API_URL}/recipes/${id}/like`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
@@ -134,7 +134,7 @@ export default function RecipesList() {
       formData.append("stepImage", newStepImage);
     }
 
-    fetch(`http://localhost:5000/recipes/${editingId}/steps`, {
+    fetch(`${API_URL}/recipes/${editingId}/steps`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
@@ -164,10 +164,10 @@ export default function RecipesList() {
       <button onClick={() => navigate("/recipes/add")}>+ Add Recipe</button>
       <div className="cards">
         {recipes.map(r => (
-          <div 
-          className="recipe-card" 
-          key={r.id}
-          onClick={() => navigate(`/recipes/${r.id}`)}
+          <div
+            className="recipe-card"
+            key={r.id}
+            onClick={() => navigate(`/recipes/${r.id}`)}
           >
             <h2>{r.title}</h2>
             <p>{r.description}</p>

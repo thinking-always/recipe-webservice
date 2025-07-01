@@ -9,10 +9,11 @@ export default function Fridge() {
   const [editingId, setEditingId] = useState(null);
 
   const token = localStorage.getItem("token");
+  const API_URL = process.env.REACT_APP_API_URL;
 
   // ✅ GET
   useEffect(() => {
-    fetch("http://localhost:5000/fridge", {
+    fetch(`${API_URL}/fridge`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -33,7 +34,7 @@ export default function Fridge() {
 
   // ✅ POST
   const addItem = () => {
-    fetch("http://localhost:5000/fridge", {
+    fetch(`${API_URL}/fridge`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +59,7 @@ export default function Fridge() {
 
   // ✅ DELETE
   const deleteItem = (id) => {
-    fetch(`http://localhost:5000/fridge/${id}`, {
+    fetch(`${API_URL}/fridge/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -86,7 +87,7 @@ export default function Fridge() {
   const saveEdit = () => {
     if (!editingId) return;
 
-    fetch(`http://localhost:5000/fridge/${editingId}`, {
+    fetch(`${API_URL}/fridge/${editingId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

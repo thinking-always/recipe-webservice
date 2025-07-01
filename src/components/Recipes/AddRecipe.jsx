@@ -10,6 +10,7 @@ export default function AddRecipe() {
     const [steps, setSteps] = useState([{image:null,text:""}]);
 
     const token = localStorage.getItem("token");
+    const API_URL = process.env.REACT_APP_API_URL;
 
 
     const handleSubmit = () => {
@@ -35,7 +36,7 @@ export default function AddRecipe() {
             formData.append("stepTexts", step.text);
         });
 
-        fetch("http://localhost:5000/recipes", {
+        fetch(`${API_URL}/recipes`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`
