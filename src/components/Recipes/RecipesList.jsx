@@ -164,7 +164,11 @@ export default function RecipesList() {
       <button onClick={() => navigate("/recipes/add")}>+ Add Recipe</button>
       <div className="cards">
         {recipes.map(r => (
-          <div className="recipe-card" key={r.id}>
+          <div 
+          className="recipe-card" 
+          key={r.id}
+          onClick={() => navigate(`/recipes/${r.id}`)}
+          >
             <h2>{r.title}</h2>
             <p>{r.description}</p>
             <div className="recipe-card-buttons">
