@@ -38,3 +38,20 @@ class FridgeItem(db.Model):
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
+    
+class CalendarEntry(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, nullable = False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+    date = db.Column(db.Date, nullable = False)
+
+    recipe = db.relationship('Recipe', backref='calendar_entries')
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'recipe_id': self.recipe_id,
+            'date': self.date.isoformat(),
+            'recipe_title': self.recipe.title if self.recipe else None
+        }

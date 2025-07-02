@@ -1,0 +1,58 @@
+.top-controls {
+  margin: 20px;
+  text-align: center;
+}
+
+.calendar {
+  max-width: 800px;
+  margin: auto;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.day-name {
+  font-weight: bold;
+  background: #f0f0f0;
+  padding: 10px;
+}
+
+.date-cell {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  min-height: 60px;
+  cursor: pointer;
+  position: relative;
+}
+
+.date-cell.selected {
+  background: #d1f5d3;
+}
+
+.date-number {
+  font-size: 14px;
+  font-weight: bold;
+  position: absolute;
+  top: 6px;
+  left: 8px;
+}
+
+.meal-name {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #555;
+}

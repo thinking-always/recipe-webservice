@@ -9,7 +9,7 @@ import os
 
 
 from models import db
-from routes import routes_recipes, routes_fridge, routes_auth
+from routes import routes_recipes, routes_fridge, routes_auth, calendar_bp
 
 load_dotenv()
 
@@ -29,6 +29,7 @@ with app.app_context():
 app.register_blueprint(routes_recipes)
 app.register_blueprint(routes_fridge)
 app.register_blueprint(routes_auth)
+app.register_blueprint(calendar_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
