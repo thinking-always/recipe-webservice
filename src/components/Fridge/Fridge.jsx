@@ -13,6 +13,12 @@ export default function Fridge() {
 
   // ✅ GET
   useEffect(() => {
+    if (!token) {
+      alert("No token found, please login!");
+      window.location.href = "/login";
+      return;
+    }
+
     fetch(`${API_URL}/fridge`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -20,7 +26,7 @@ export default function Fridge() {
     })
       .then((res) => {
         if (res.status === 401) {
-          alert("expired token!");
+          alert("Token expired! Please login again.");
           window.location.href = "/login";
           return [];
         }
@@ -28,6 +34,10 @@ export default function Fridge() {
       })
       .then((data) => {
         console.log("백엔드에서 받은 데이터", data);
+        if (!Array.isArray(data)) {
+          console.error("Expected array but got:", data);
+          return;
+        }
         setItems(data);
       });
   }, []);
@@ -49,11 +59,15 @@ export default function Fridge() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setItems([...items, data]);
-        setName("");
-        setQuantity("");
-        setUnit("");
-        setExpiry("");
+        if (data && data.id) {
+          setItems([...items, data]);
+          setName("");
+          setQuantity("");
+          setUnit("");
+          setExpiry("");
+        } else {
+          console.error("Add failed:", data);
+        }
       });
   };
 
@@ -102,13 +116,16 @@ export default function Fridge() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setItems(items.map((item) => (item.id === editingId ? data : item)));
-
-        setEditingId(null);
-        setName("");
-        setQuantity("");
-        setUnit("");
-        setExpiry("");
+        if (data && data.id) {
+          setItems(items.map((item) => (item.id === editingId ? data : item)));
+          setEditingId(null);
+          setName("");
+          setQuantity("");
+          setUnit("");
+          setExpiry("");
+        } else {
+          console.error("Edit failed:", data);
+        }
       });
   };
 
@@ -117,13 +134,14 @@ export default function Fridge() {
       <h1>Fridge page</h1>
 
       <ul>
-        {items.map((item) => (
-          <li key={item.id}>
-            {item.name} — {item.quantity} {item.unit} — 유통기한: {item.expiry_date}
-            <button onClick={() => deleteItem(item.id)}>❌ Delete</button>
-            <button onClick={() => startEdit(item)}>✏️ Edit</button>
-          </li>
-        ))}
+        {Array.isArray(items) &&
+          items.map((item) => (
+            <li key={item.id}>
+              {item.name} — {item.quantity} {item.unit} — 유통기한: {item.expiry_date}
+              <button onClick={() => deleteItem(item.id)}>❌ Delete</button>
+              <button onClick={() => startEdit(item)}>✏️ Edit</button>
+            </li>
+          ))}
       </ul>
 
       <div>
