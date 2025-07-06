@@ -3,7 +3,7 @@
 from flask import Blueprint, request, jsonify
 from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required, verify_jwt_in_request
-from models import db, Recipe, Step
+from models import db, Recipe, Step, CalendarEntry
 from werkzeug.utils import secure_filename
 import uuid
 import os
@@ -157,6 +157,9 @@ def delete_recipe(id):
     recipe = Recipe.query.get(id)
     if not recipe:
         return jsonify({"msg": "Recipe not found"}), 404
+    
+    CalendarEntry.query.filter_by(recipe_id=id).delete()
+
     db.session.delete(recipe)
     db.session.commit()
     return jsonify({"msg": f"Deleted recipe {id}"})

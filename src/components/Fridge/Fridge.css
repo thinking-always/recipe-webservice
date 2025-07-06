@@ -1,0 +1,45 @@
+.modal {
+    position: fixed;
+    top: 115px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    display: flex;
+    background: #fff;
+    width: 75%;
+    height: 75%;
+    border-radius: 8px;
+
+}
+
+.ingredient-list {
+    width: 70%;
+    height: 100%;
+    border-right: 1px solid #ddd;
+    padding: 1rem;
+    overflow-y: auto;
+}
+.ingredient-from {
+    width: 30%;
+    height: 100%;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.close-button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #999;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+

@@ -18,7 +18,8 @@ class Step(db.Model):
     image_path = db.Column(db.String(255))
     text = db.Column(db.Text)
 
-class FridgeItem(db.Model):
+class Ingredient(db.Model):
+    __tablename__ = 'ingredients'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(100), nullable=False)
@@ -27,6 +28,7 @@ class FridgeItem(db.Model):
     expiry_date = db.Column(db.Date, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    type = db.Column(db.String(20), nullable=False)  # 'fridge' or 'pantry'
 
     def to_dict(self):
         return {

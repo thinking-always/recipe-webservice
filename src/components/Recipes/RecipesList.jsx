@@ -45,19 +45,36 @@ export default function RecipesList() {
     setEditingId(recipe.id);
   };
 
-  const handleDelete = (id) => {
-    fetch(`${API_URL}/recipes/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("Deleted:", data);
-        setRecipes(recipes.filter(r => r.id !== id));
+  const handleDelete = async (id) => {
+    if (!window.confirm("정말로 이 레시피를 삭제하시겠습니까?")) return;
+
+    try {
+      const res = await fetch(`${API_URL}/recipes/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
+
+      if (!res.ok) {
+        // 서버가 JSON 말고 HTML을 보내면 JSON 파싱 전에 에러 방지
+        const text = await res.text();
+        console.error("Delete failed:", text);
+        alert(`삭제 실패: ${res.status}`);
+        return;
+      }
+
+      const data = await res.json();
+      console.log("Deleted:", data);
+
+      setRecipes(recipes.filter(r => r.id !== id));
+      alert(`레시피 ${id} 삭제 완료`);
+    } catch (err) {
+      console.error("Delete error:", err);
+      navigate("/recipes");
+    }
   };
+
 
   const handleUpdate = () => {
     const formData = new FormData();
@@ -173,8 +190,18 @@ export default function RecipesList() {
             <p>{r.description}</p>
             <div className="recipe-card-buttons">
               <button onClick={() => handleLike(r.id)}>❤️ {r.likes ?? 0}</button>
-              <button onClick={() => startEditing(r)}>Edit</button>
-              <button onClick={() => handleDelete(r.id)}>Delete</button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();  // ✅ 부모 onClick으로 안 올라감
+                  startEditing(r);
+                }}
+              >Edit</button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();  // ✅ 부모 onClick으로 안 올라감
+                  handleDelete(r.id);
+                }}
+              >Delete</button>
             </div>
           </div>
         ))}
