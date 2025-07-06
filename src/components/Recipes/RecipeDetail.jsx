@@ -1,6 +1,6 @@
-import { useParams, useNavigate} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import './RecipeDetail.css';
 
 export default function RecipeDetail() {
   const { id } = useParams();
@@ -11,53 +11,74 @@ export default function RecipeDetail() {
 
   useEffect(() => {
     fetch(`${API_URL}/recipes/${id}`)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
       })
-      .then(data => setRecipe(data))
-      .catch(err => {
+      .then((data) => setRecipe(data))
+      .catch((err) => {
         console.error(err);
-        // 필요하면 상태 업데이트: "레시피가 존재하지 않습니다"
+        alert("레시피 정보를 불러오지 못했습니다.");
+        navigate("/recipes");
       });
-
-  }, [id]);
+  }, [id, API_URL, navigate]);
 
   const handleDelete = async () => {
-    const res = await fetch (`${API_URL}/recipes/${id}`, {
+    if (!window.confirm("정말로 이 레시피를 삭제할까요?")) return;
+
+    const res = await fetch(`${API_URL}/recipes/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
-  },
+      },
     });
 
     if (res.ok) {
-      alert("Deleted.");
-      console.log("Delete successful.");
-      navigate('/recipes');
+      alert("레시피가 삭제되었습니다.");
+      navigate("/recipes");
     } else {
-      console.log("Delete failed.");
+      console.error("삭제 실패");
+      alert("삭제 실패");
     }
-};
+  };
 
   if (!recipe) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="recipe-detail-page">
       <h1>{recipe.title}</h1>
       <p>{recipe.description}</p>
-      <img src={`http://localhost:5000/${recipe.cover_image_path}`} alt="" width="200" />
+
+      {recipe.cover_image_path && (
+        <img
+          src={`http://localhost:5000/${recipe.cover_image_path}`}
+          alt="Cover"
+          width="300"
+        />
+      )}
+
       <h2>Steps</h2>
-      {recipe.steps && recipe.steps.map((s) => (
-        <div key={s.step_number}>
-          <h3>Step {s.step_number}</h3>
-          {s.image_path && (
-            <img src={`http://localhost:5000/${s.image_path}`} alt="" width="100" />
-          )}
-          <p>{s.text}</p>
-        </div>
-      ))}
+      {recipe.steps && recipe.steps.length > 0 ? (
+        recipe.steps.map((step) => (
+          <div key={step.step_number} className="recipe-step">
+            <h3>Step {step.step_number}</h3>
+            {step.image_path && (
+              <img
+                src={`http://localhost:5000/${step.image_path}`}
+                alt={`Step ${step.step_number}`}
+                width="200"
+              />
+            )}
+            <p>{step.text}</p>
+          </div>
+        ))
+      ) : (
+        <p>No steps available.</p>
+      )}
+
       <button onClick={handleDelete}>Delete</button>
+      <button onClick={() => navigate(`/recipes/${id}/edit`)}>Edit</button>
+      <button onClick={() => navigate("/recipes")}>Back to List</button>
     </div>
   );
 }

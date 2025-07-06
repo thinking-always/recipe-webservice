@@ -1,45 +1,147 @@
+/* 모달 배경 */
 .modal {
-    position: fixed;
-    top: 115px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+  position: fixed;
+  top: 100px;  /* header 영역 여백 */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 
+/* 모달 내부 */
 .modal-content {
-    display: flex;
-    background: #fff;
-    width: 75%;
-    height: 75%;
-    border-radius: 8px;
-
+  display: flex;
+  width: 80%;
+  max-width: 1000px;
+  height: 80%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
 }
 
+/* 왼쪽: 리스트 영역 */
 .ingredient-list {
-    width: 70%;
-    height: 100%;
-    border-right: 1px solid #ddd;
-    padding: 1rem;
-    overflow-y: auto;
+  flex: 2;
+  border-right: 1px solid #ddd;
+  padding: 2rem;
+  overflow-y: auto;
 }
-.ingredient-from {
-    width: 30%;
-    height: 100%;
-    padding: 10px;
-    overflow-y: auto;
+
+.ingredient-list h3 {
+  margin-bottom: 1rem;
+}
+
+.ingredient-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ingredient-list li {
+  margin-bottom: 0.8rem;
+  background: #f8f8f8;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ingredient-list li button {
+  margin-left: 0.5rem;
+  background: #e74c3c;
+  border: none;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ingredient-list li button:nth-child(2) {
+  background: #3498db;
+}
+
+/* 오른쪽: 폼 영역 */
+.ingredient-form {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.ingredient-form h3 {
+  margin-bottom: 1rem;
+}
+
+.ingredient-form input {
+  margin-bottom: 0.8rem;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.ingredient-form button {
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ingredient-form button:first-of-type {
+  background: #27ae60;
+  color: #fff;
+}
+
+.ingredient-form button:first-of-type:hover {
+  background: #1e8449;
 }
 
 .close-button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background: #999;
-    color: white;
-    border: none;
-    cursor: pointer;
+  background: #999;
+  color: #fff;
 }
 
+.close-button:hover {
+  background: #666;
+}
+
+/* 부모 페이지 섹션 버튼 */
+.fridge-section, .pantry-section {
+  margin: 1rem;
+}
+
+.fridge-section button,
+.pantry-section button {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.fridge-section button:hover,
+.pantry-section button:hover {
+  background: #217dbb;
+}
+
+.sections-wrapper {
+  display: flex;
+  justify-content: space-center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+.fridge-section,
+.pantry-section {
+    flex: 1;
+    background: #f7f7f7;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}

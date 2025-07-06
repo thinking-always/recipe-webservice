@@ -171,28 +171,30 @@ export default function Fridge() {
 
   return (
     <div className="ingredient-page">
-      <div className="fridge-section">
-        <h2>Fridge ingredients</h2>
-        <button
-          onClick={() => {
-            setShowModal(true);
-            setActiveSection("fridge");
-          }}
-        >
-          manage Ingredient
-        </button>
-      </div>
+      <div className="sections-wrapper">
+        <div className="fridge-section">
+          <h2>Fridge ingredients</h2>
+          <button
+            onClick={() => {
+              setShowModal(true);
+              setActiveSection("fridge");
+            }}
+          >
+            manage Ingredient
+          </button>
+        </div>
 
-      <div className="pantry-section">
-        <h2>Pantry ingredients</h2>
-        <button
-          onClick={() => {
-            setShowModal(true);
-            setActiveSection("pantry");
-          }}
-        >
-          manage Ingredient
-        </button>
+        <div className="pantry-section">
+          <h2>Pantry ingredients</h2>
+          <button
+            onClick={() => {
+              setShowModal(true);
+              setActiveSection("pantry");
+            }}
+          >
+            manage Ingredient
+          </button>
+        </div>
       </div>
 
       {showModal && (
@@ -249,18 +251,18 @@ export default function Fridge() {
               )}
               <button
                 className="close-button"
-                onClick={() =>{
+                onClick={() => {
                   setShowModal(false);
                   setActiveSection("fridge");
                 }}
               >
-              Close
-            </button>
+                Close
+              </button>
+            </div>
           </div>
         </div>
-        </div>
-  )
-}
+      )
+      }
     </div >
   );
 }

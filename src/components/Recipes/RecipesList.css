@@ -1,42 +1,104 @@
 .recipe-page {
-    margin-left: 100px;
+  margin-left: 100px;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.recipe-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.recipe-page > button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.recipe-page > button:hover {
+  background: #0056b3;
 }
 
 .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
 }
 
 .recipe-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 3px 5px rgb(232, 236, 214);
-    background: #fff;
-    max-width: 350px;
-    max-height: 200px;
-    position: relative;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  max-width: 350px;
+  min-height: 180px;
+  position: relative;
+  transition: box-shadow 0.2s;
 }
 
-.recipe-card h2{
-    margin: 0 0 0.5rem;
+.recipe-card:hover {
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
 }
 
-.recipe-card p{
-    margin: 0 0 1rem;
-    align-items: center;
-    justify-content: center;
+.recipe-card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+}
+
+.recipe-card p {
+  margin: 0 0 2rem 0;
+  line-height: 1.4;
+  color: #444;
 }
 
 .recipe-card-buttons {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-       
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
+.recipe-card-buttons button {
+  border: none;
+  background: #007bff;
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.recipe-card-buttons button:hover {
+  background: #0056b3;
+}
+
+.recipe-card-buttons button:nth-child(1) {
+  background: #ff6b81;
+}
+
+.recipe-card-buttons button:nth-child(1):hover {
+  background: #e6495f;
+}
+
+.recipe-card-buttons button:nth-child(2) {
+  background: #17a2b8;
+}
+
+.recipe-card-buttons button:nth-child(2):hover {
+  background: #117a8b;
+}
+
+.recipe-card-buttons button:nth-child(3) {
+  background: #6c757d;
+}
+
+.recipe-card-buttons button:nth-child(3):hover {
+  background: #5a6268;
+}

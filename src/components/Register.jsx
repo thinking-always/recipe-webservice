@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './Auth.css';
 
-export default function Login() {
+export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    fetch("http://localhost:5000/login", {
+  const handleRegister = () => {
+    fetch("http://localhost:5000/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -18,13 +18,12 @@ export default function Login() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Login Response:", data);
-        if (data.access_token) {
-          localStorage.setItem("token", data.access_token);
-          alert("Login success!");
-          navigate("/");
+        console.log("Register Response:", data);
+        if (data.success) {
+          alert("회원가입 성공! 로그인해주세요.");
+          navigate("/login");
         } else {
-          alert("Login failed");
+          alert("회원가입 실패!");
         }
       })
       .catch((err) => console.log(err));
@@ -32,28 +31,28 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
-        <h1>Login</h1>
+      <div className="auth-card register-card">
+        <h1>Sign Up</h1>
         <input
           type="text"
-          placeholder="Username"
+          placeholder="New Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
 
         <input
           type="password"
-          placeholder="Password"
+          placeholder="New Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="auth-btn" onClick={handleLogin}>Login</button>
+        <button className="auth-btn" onClick={handleRegister}>Register</button>
 
         <p>
-          아직 계정이 없나요?{" "}
-          <span className="auth-link" onClick={() => navigate("/register")}>
-            회원가입 하기
+          이미 계정이 있나요?{" "}
+          <span className="auth-link" onClick={() => navigate("/login")}>
+            로그인 하기
           </span>
         </p>
       </div>

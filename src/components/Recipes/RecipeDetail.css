@@ -1,0 +1,66 @@
+/* RecipeDetail.css */
+
+.recipe-detail-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.recipe-detail-page h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+}
+
+.recipe-detail-page p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.recipe-detail-page img {
+  display: block;
+  margin: 1rem 0;
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.recipe-step {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.recipe-step h3 {
+  margin: 0 0 0.5rem;
+}
+
+.recipe-step img {
+  max-width: 100%;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.recipe-detail-page button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  margin-right: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.recipe-detail-page button:hover {
+  background: #0056b3;
+}
+
+.recipe-detail-page button:last-child {
+  background: #6c757d;
+}
+
+.recipe-detail-page button:last-child:hover {
+  background: #5a6268;
+}

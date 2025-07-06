@@ -17,6 +17,7 @@ export default function RecipesList() {
 
 
   const token = localStorage.getItem("token");
+  console.log("Token:", token);
 
   useEffect(() => {
     fetch(`${API_URL}/recipes`)
@@ -193,7 +194,7 @@ export default function RecipesList() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();  // ✅ 부모 onClick으로 안 올라감
-                  startEditing(r);
+                  navigate(`/recipes/${r.id}/edit`);
                 }}
               >Edit</button>
               <button

@@ -1,22 +1,47 @@
-/* 카드 리스트: 가로 배치 예시 */
+/* 전체 컨테이너 */
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.home-container h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.home-container p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.banners h2 {
+  margin: 2rem 0 1rem;
+  font-size: 1.3rem;
+}
+
+/* 리스트 가로 스크롤 */
 .popular-list,
 .latest-list {
   display: flex;
   gap: 1rem;
   overflow-x: auto;
   padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
 }
 
-/* Link 자체를 카드로 */
 .recipe-card {
+  scroll-snap-align: start;
+
   display: flex;
-  flex-direction: column;   /* 내용 세로 쌓기 */
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: flex-start;
 
-  width: 250px;             /* 카드 폭 고정 */
-  min-height: 200px;        /* 높이 최소값 */
+  width: 250px;
+  min-height: 200px;
+
   background: #fff;
-
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1rem;
@@ -24,8 +49,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  text-decoration: none;    /* Link 밑줄 제거 */
-  color: inherit;           /* Link 기본 글자색 상속 */
+  text-decoration: none;
+  color: inherit;
 }
 
 .recipe-card:hover {
@@ -45,3 +70,8 @@
   line-height: 1.4;
 }
 
+.recipe-card .card-likes {
+  margin-top: auto;
+  font-weight: bold;
+  color: #007bff;
+}
