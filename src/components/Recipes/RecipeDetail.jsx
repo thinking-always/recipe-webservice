@@ -44,6 +44,13 @@ export default function RecipeDetail() {
 
   if (!recipe) return <div>Loading...</div>;
 
+  // ✅ Cloudinary URL이면 그대로, 아니면 로컬 경로 붙이기
+  const getImageSrc = (path) => {
+    if (!path) return null;
+    if (path.startsWith("http")) return path;
+    return `${API_URL}/${path}`;
+  };
+
   return (
     <div className="recipe-detail-page">
       <h1>{recipe.title}</h1>
@@ -51,7 +58,7 @@ export default function RecipeDetail() {
 
       {recipe.cover_image_path && (
         <img
-          src={`http://localhost:5000/${recipe.cover_image_path}`}
+          src={getImageSrc(recipe.cover_image_path)}
           alt="Cover"
           width="300"
         />
@@ -64,7 +71,7 @@ export default function RecipeDetail() {
             <h3>Step {step.step_number}</h3>
             {step.image_path && (
               <img
-                src={`http://localhost:5000/${step.image_path}`}
+                src={getImageSrc(step.image_path)}
                 alt={`Step ${step.step_number}`}
                 width="200"
               />
