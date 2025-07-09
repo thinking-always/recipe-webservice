@@ -1,5 +1,6 @@
 .recipe-page {
-  margin-left: 100px;
+  margin: 0 auto;
+  max-width: 1200px;
   padding: 2rem;
   font-family: Arial, sans-serif;
 }
@@ -26,7 +27,7 @@
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
 
@@ -36,6 +37,7 @@
   overflow: hidden;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   background: #fff;
+  width: 100%;
   max-width: 350px;
   transition: box-shadow 0.2s;
   display: flex;
@@ -62,7 +64,7 @@
 
 .recipe-card-info h2 {
   margin: 0 0 0.5rem;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .recipe-card-info p {
@@ -76,6 +78,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .recipe-card-actions button {
@@ -103,4 +106,28 @@
 
 .recipe-card-buttons button:hover {
   background: #0056b3;
+}
+
+/* ✅ 모바일 대응 */
+@media (max-width: 768px) {
+  .recipe-page {
+    padding: 1rem;
+    margin: 0 auto;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-card {
+    max-width: 100%;
+  }
+
+  .recipe-card-info h2 {
+    font-size: 1rem;
+  }
+
+  .recipe-page > button {
+    width: 100%;
+  }
 }

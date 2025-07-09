@@ -54,9 +54,23 @@ export default function Home() {
                 to={`/recipes/${recipe.id}`}
                 className="recipe-card"
               >
-                <h3>{recipe.title}</h3>
-                <p>{recipe.description}</p>
+                {recipe.cover_image_path && (
+                  <img
+                    src={recipe.cover_image_path.startsWith("http")
+                      ? recipe.cover_image_path
+                      : `${API_URL}/${recipe.cover_image_path}`}
+                    alt={recipe.title}
+                  />
+                )}
+                <div className="recipe-card-content">
+                  <h3>{recipe.title}</h3>
+                  <p>{recipe.description}</p>
+                  {recipe.likes !== undefined && (
+                    <p className="card-likes">❤️ Likes: {recipe.likes}</p>
+                  )}
+                </div>
               </Link>
+
             ))
           )}
         </div>

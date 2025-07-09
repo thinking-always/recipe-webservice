@@ -1,19 +1,30 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import "./Header.css";
 
+export default function Header() {
+  const [isOpen, setIsOpen] = useState(false);
 
-export default function Home() {
-    const navigate = useNavigate();
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <header className="header">
-        <h1>Header</h1>
+      <div className="left">
+        <button className="burger" onClick={toggleMenu}>☰</button>
+        
+        <h1 className="logo">My App</h1>
+      </div>
+
+      <nav className={`nav-links ${isOpen ? "open" : ""}`}>
         <Link to="/">Home</Link>
         <Link to="/recipes">Recipes</Link>
         <Link to="/fridge">Fridge</Link>
         <Link to="/calendar">Calendar</Link>
         <Link to="/feedback">Feedback</Link>
         <Link to="/login">Login</Link>
-
+      </nav>
     </header>
   );
 }

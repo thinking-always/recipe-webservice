@@ -1,7 +1,7 @@
-/* 모달 배경 */
+/* ✅ 기본 모달 배경 */
 .modal {
   position: fixed;
-  top: 100px;  /* header 영역 여백 */
+  top: 100px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -12,9 +12,11 @@
   z-index: 9999;
 }
 
-/* 모달 내부 */
+/* ✅ 모달 내부 */
 .modal-content {
   display: flex;
+  flex-direction: row;
+  /* PC에서는 좌우 배치 */
   width: 80%;
   max-width: 1000px;
   height: 80%;
@@ -24,7 +26,7 @@
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* 왼쪽: 리스트 영역 */
+/* ✅ 왼쪽: 리스트 */
 .ingredient-list {
   flex: 2;
   border-right: 1px solid #ddd;
@@ -48,24 +50,32 @@
   padding: 0.6rem 1rem;
   display: flex;
   justify-content: space-between;
+
   align-items: center;
 }
 
 .ingredient-list li button {
-  margin-left: 0.5rem;
+  
   background: #e74c3c;
   border: none;
   color: #fff;
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
   cursor: pointer;
+  
 }
+
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
 
 .ingredient-list li button:nth-child(2) {
-  background: #3498db;
+  background: #2e8cca;
 }
 
-/* 오른쪽: 폼 영역 */
+/* ✅ 오른쪽: 폼 */
 .ingredient-form {
   flex: 1;
   padding: 2rem;
@@ -110,9 +120,14 @@
   background: #666;
 }
 
-/* 부모 페이지 섹션 버튼 */
-.fridge-section, .pantry-section {
-  margin: 1rem;
+/* ✅ 부모 페이지 섹션 */
+.fridge-section,
+.pantry-section {
+  flex: 1;
+  background: #f7f7f7;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .fridge-section button,
@@ -133,15 +148,63 @@
 
 .sections-wrapper {
   display: flex;
-  justify-content: space-center;
+  justify-content: center;
   gap: 2rem;
   margin: 2rem 0;
 }
-.fridge-section,
-.pantry-section {
-    flex: 1;
-    background: #f7f7f7;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+/* ✅✅✅ 모바일 대응 */
+@media (max-width: 768px) {
+  .modal-content {
+    display: flex;
+    /* ✅ 다시 flex! */
+    flex-direction: column;
+    /* ✅ 세로 배치 */
+    width: 90%;
+    height: auto;
+    /* ✅ 높이 자동 */
+  }
+
+  .ingredient-list {
+    flex: none;
+    width: 90%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem;
+    font-size: 0.8rem;
+    font-family: poppins, sans-serif;
+  }
+
+ .ingredient-list li {
+  display: flex;
+  justify-content: space-between;
+ }
+
+  .ingredient-list li button {
+    cursor: pointer;
+    margin-left: 5px;
+    
+  }
+
+  .ingredient-form {
+    flex: none;
+    width: 80%;
+    padding: 1rem;
+  }
+
+  .ingredient-form input,
+  .ingredient-form button {
+    width: 100%;
+    /* ✅ 작은 화면에서 꽉 채움 */
+  }
+
+  .sections-wrapper {
+    flex-direction: column;
+    /* ✅ 세로 배치 */
+    gap: 1rem;
+  }
+}
+
+.ingredient-list li button:hover {
+  opacity: 0.9;
 }

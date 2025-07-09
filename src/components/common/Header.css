@@ -1,19 +1,69 @@
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 1rem;
-    padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;  /* ✅ nav-links absolute 기준점! */
+  padding: 1rem 2rem;
+  background: #fff;
+  box-shadow: 0 2px 7px #e2e3d6;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.burger {
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: none; /* PC 숨김 */
+  z-index: 20;   /* ✅ 메뉴보다 위! */
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-links a {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ 모바일: 햄버거 보이게, 메뉴는 버튼 기준으로 열림 */
+@media (max-width: 768px) {
+  .burger {
+    display: block;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 70px;  /* header 높이만큼 내려감 */
+    left: 0;
+    right: 0;
     background: #fff;
-    box-shadow: 0 2px 7px #e2e3d6;
-}
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 2rem;
+    display: none;  /* 기본 숨김 */
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);
+    z-index: 10;  /* 버튼 아래에 깔림 */
+  }
 
-.header a {
-    color: #333;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.header a:hover {
-    text-decoration: underline;
+  .nav-links.open {
+    display: flex; /* 버튼 누르면 열림 */
+  }
 }

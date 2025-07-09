@@ -212,8 +212,10 @@ export default function Fridge() {
                       <li key={item.id}>
                         {item.name} - {item.quantity} {item.unit} - 유통기한:{" "}
                         {item.expiry_date}
-                        <button onClick={() => deleteItem(item.id)}>delete</button>
-                        <button onClick={() => startEdit(item)}>edit</button>
+                        <div className="btn-group">
+                          <button onClick={() => deleteItem(item.id)}>x</button>
+                          <button onClick={() => startEdit(item)}>o</button>
+                        </div>
                       </li>
                     )
                   )}
