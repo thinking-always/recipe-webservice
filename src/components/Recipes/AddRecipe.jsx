@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./AddRecipe.css";
 
 export default function AddRecipe() {
@@ -9,10 +10,67 @@ export default function AddRecipe() {
   const [coverPreview, setCoverPreview] = useState(null);
   const [steps, setSteps] = useState([{ image: null, preview: null, text: "" }]);
 
+  const [editForm, setEditForm] = useState({
+    image: "",
+    filename: "",
+  });
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const API_URL = process.env.REACT_APP_API_URL;
 
+  // ✅ Cloudinary Direct Upload 공통 함수
+  async function uploadToCloudinary(file) {
+    // 1️⃣ 서버에서 signature 발급 받기
+    const sigRes = await fetch(`${API_URL}/uploader/signature`);
+    const sigData = await sigRes.json();
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("api_key", sigData.api_key);
+    formData.append("timestamp", sigData.timestamp);
+    formData.append("signature", sigData.signature);
+    formData.append("folder", sigData.folder);
+
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/auto/upload`;
+
+    const uploadRes = await fetch(cloudinaryUrl, {
+      method: "POST",
+      body: formData,
+    });
+
+    const uploadData = await uploadRes.json();
+    if (uploadData.secure_url) {
+      return uploadData.secure_url;
+    } else {
+      throw new Error("Cloudinary upload failed");
+    }
+  }
+
+  // ✅ 커버 이미지 업로드
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    try {
+      const url = await uploadToCloudinary(file);
+      setCoverImage(url); // URL만 state에 저장
+      setCoverPreview(URL.createObjectURL(file));
+    } catch (err) {
+      console.error("Cover image upload failed:", err);
+    }
+  };
+
+  // ✅ 수정용 이미지 업로드 (예시)
+  const handleEditImageUpload = async (e) => {
+    const file = e.target.files[0];
+    try {
+      const url = await uploadToCloudinary(file);
+      setEditForm({ ...editForm, image: url, filename: file.name });
+    } catch (err) {
+      console.error("Edit image upload failed:", err);
+    }
+  };
+
+  // ✅ 새 레시피 저장
   const handleSubmit = async () => {
     if (!title.trim()) {
       alert("Please enter a title and description!");
@@ -20,7 +78,9 @@ export default function AddRecipe() {
     }
 
     let coverImageUrl = "";
-    if (coverImage) {
+    if (coverImage && typeof coverImage === "string") {
+      coverImageUrl = coverImage; // 이미 URL이면 그대로
+    } else if (coverImage) {
       try {
         coverImageUrl = await uploadToCloudinary(coverImage);
       } catch (err) {
@@ -71,32 +131,6 @@ export default function AddRecipe() {
     }
   };
 
-  async function uploadToCloudinary(file) {
-    const sigRes = await fetch(`${API_URL}/uploader/signature`);
-    const sigData = await sigRes.json();
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("api_key", sigData.api_key);
-    formData.append("timestamp", sigData.timestamp);
-    formData.append("signature", sigData.signature);
-    formData.append("folder", sigData.folder);
-
-    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/auto/upload`;
-
-    const uploadRes = await fetch(cloudinaryUrl, {
-      method: "POST",
-      body: formData,
-    });
-
-    const uploadData = await uploadRes.json();
-    if (uploadData.secure_url) {
-      return uploadData.secure_url;
-    } else {
-      throw new Error("Cloudinary upload failed");
-    }
-  }
-
   const handleAddStep = () => {
     setSteps([...steps, { image: null, preview: null, text: "" }]);
   };
@@ -142,8 +176,14 @@ export default function AddRecipe() {
           }}
         />
         {coverPreview && (
-          <img src={coverPreview} alt="Cover Preview" width="200" style={{ marginTop: "1rem" }} />
+          <img
+            src={coverPreview}
+            alt="Cover Preview"
+            width="200"
+            style={{ marginTop: "1rem" }}
+          />
         )}
+        <button type="button" onClick={handleImageUpload}>Upload Cover to Cloudinary</button>
       </div>
 
       <div className="steps-section">
@@ -164,13 +204,20 @@ export default function AddRecipe() {
             />
 
             {step.preview && (
-              <img src={step.preview} alt={`Step ${index + 1} Preview`} width="200" style={{ marginTop: "0.5rem" }} />
+              <img
+                src={step.preview}
+                alt={`Step ${index + 1} Preview`}
+                width="200"
+                style={{ marginTop: "0.5rem" }}
+              />
             )}
 
             <textarea
               placeholder={`Step ${index + 1} description`}
               value={step.text}
-              onChange={(e) => handleStepChange(index, "text", e.target.value)}
+              onChange={(e) =>
+                handleStepChange(index, "text", e.target.value)
+              }
             />
           </div>
         ))}
@@ -183,6 +230,20 @@ export default function AddRecipe() {
       <button className="submit-btn" onClick={handleSubmit}>
         Save Recipe
       </button>
+
+      {/* ✅ 예시: 수정 이미지 업로드 */}
+      <div style={{ marginTop: "2rem" }}>
+        <h3>Edit Image Upload Example</h3>
+        <input type="file" onChange={handleEditImageUpload} />
+        {editForm.image && (
+          <p>
+            New Image URL:{" "}
+            <a href={editForm.image} target="_blank" rel="noreferrer">
+              {editForm.image}
+            </a>
+          </p>
+        )}
+      </div>
     </div>
   );
 }

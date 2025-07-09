@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import './EditRecipe.css'; 
+import './EditRecipe.css';
 
 export default function EditRecipe() {
   const { id } = useParams();
@@ -10,8 +10,11 @@ export default function EditRecipe() {
 
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
-  const [newCoverImage, setNewCoverImage] = useState(null);
+  const [newCoverImageFile, setNewCoverImageFile] = useState(null);
+  const [newCoverImagePreview, setNewCoverImagePreview] = useState(null);
+  const [newCoverImageUrl, setNewCoverImageUrl] = useState("");
   const [newSteps, setNewSteps] = useState([]);
+
   const [newStepText, setNewStepText] = useState("");
   const [newStepImage, setNewStepImage] = useState(null);
 
@@ -21,35 +24,86 @@ export default function EditRecipe() {
       .then(data => {
         setNewTitle(data.title);
         setNewDescription(data.description);
+        setNewCoverImageUrl(data.cover_image_path || "");
         setNewSteps(
           data.steps.map((s) => ({
             imagePath: s.image_path,
-            newImage: null,
+            newImageFile: null,
             text: s.text,
           }))
         );
       });
-  }, [id]);
+  }, [id, API_URL]);
 
-  const handleUpdate = () => {
+  // ✅ Cloudinary Direct Upload 함수
+  async function uploadToCloudinary(file) {
+    const sigRes = await fetch(`${API_URL}/uploader/signature`);
+    const sigData = await sigRes.json();
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("api_key", sigData.api_key);
+    formData.append("timestamp", sigData.timestamp);
+    formData.append("signature", sigData.signature);
+    formData.append("folder", sigData.folder);
+
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/auto/upload`;
+
+    const uploadRes = await fetch(cloudinaryUrl, {
+      method: "POST",
+      body: formData,
+    });
+
+    const uploadData = await uploadRes.json();
+    if (uploadData.secure_url) {
+      return uploadData.secure_url;
+    } else {
+      throw new Error("Cloudinary upload failed");
+    }
+  }
+
+  // ✅ 커버 이미지 업로드
+  const handleCoverImageUpload = async () => {
+    if (!newCoverImageFile) return;
+    try {
+      const url = await uploadToCloudinary(newCoverImageFile);
+      setNewCoverImageUrl(url);
+      alert("Cover image uploaded!");
+    } catch (err) {
+      console.error(err);
+      alert("Cover image upload failed");
+    }
+  };
+
+  // ✅ 수정 저장
+  const handleUpdate = async () => {
+    let coverImageUrl = newCoverImageUrl;
+
+    if (newCoverImageFile) {
+      coverImageUrl = await uploadToCloudinary(newCoverImageFile);
+    }
+
+    const stepImageUrls = [];
+    for (let step of newSteps) {
+      if (step.newImageFile) {
+        const url = await uploadToCloudinary(step.newImageFile);
+        stepImageUrls.push(url);
+      } else {
+        stepImageUrls.push(step.imagePath || "");
+      }
+    }
+
     const formData = new FormData();
     formData.append("title", newTitle);
     formData.append("description", newDescription);
+    formData.append("coverImageUrl", coverImageUrl);
 
-    if (newCoverImage) {
-      formData.append("coverImage", newCoverImage);
-    }
-
-    newSteps.forEach((step) => {
-      if (step.newImage) {
-        formData.append("stepImages", step.newImage);
-      } else {
-        formData.append("stepImages", "");
-      }
+    newSteps.forEach((step, idx) => {
       formData.append("stepTexts", step.text);
+      formData.append("stepImageUrls", stepImageUrls[idx]);
     });
 
-    fetch(`${API_URL}/recipes/${id}`, {
+    await fetch(`${API_URL}/recipes/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -63,16 +117,20 @@ export default function EditRecipe() {
       });
   };
 
-  const handleAddStep = () => {
+  // ✅ 스텝 추가
+  const handleAddStep = async () => {
     if (!newStepText) return;
+
+    let stepImageUrl = "";
+    if (newStepImage) {
+      stepImageUrl = await uploadToCloudinary(newStepImage);
+    }
 
     const formData = new FormData();
     formData.append("stepText", newStepText);
-    if (newStepImage) {
-      formData.append("stepImage", newStepImage);
-    }
+    formData.append("stepImageUrl", stepImageUrl);
 
-    fetch(`${API_URL}/recipes/${id}/steps`, {
+    await fetch(`${API_URL}/recipes/${id}/steps`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -84,14 +142,20 @@ export default function EditRecipe() {
         setNewSteps([
           ...newSteps,
           {
-            imagePath: data.image_path || "",
-            newImage: null,
+            imagePath: stepImageUrl,
+            newImageFile: null,
             text: newStepText,
           },
         ]);
         setNewStepText("");
         setNewStepImage(null);
       });
+  };
+
+  const getImageSrc = (path) => {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    return `${API_URL}/${path}`;
   };
 
   return (
@@ -109,6 +173,29 @@ export default function EditRecipe() {
         value={newDescription}
         onChange={(e) => setNewDescription(e.target.value)}
       />
+
+      <div>
+        <h4>Cover Image</h4>
+        {newCoverImageUrl && (
+          <img src={getImageSrc(newCoverImageUrl)} alt="cover" width="200" />
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            setNewCoverImageFile(e.target.files[0]);
+            setNewCoverImagePreview(URL.createObjectURL(e.target.files[0]));
+          }}
+        />
+        {newCoverImagePreview && (
+          <img
+            src={newCoverImagePreview}
+            alt="new cover preview"
+            width="200"
+          />
+        )}
+        <button onClick={handleCoverImageUpload}>Upload Cover</button>
+      </div>
 
       <div className="step-section">
         <h4>Add new Step</h4>
@@ -128,17 +215,15 @@ export default function EditRecipe() {
       {newSteps.map((step, index) => (
         <div className="step-section" key={index}>
           <p>Step {index + 1}</p>
-          <img
-            src={`http://localhost:5000/${step.imagePath}`}
-            alt=""
-            width="100"
-          />
+          {step.imagePath && (
+            <img src={getImageSrc(step.imagePath)} alt="" width="150" />
+          )}
           <input
             type="file"
             accept="image/*"
             onChange={(e) => {
               const updated = [...newSteps];
-              updated[index].newImage = e.target.files[0];
+              updated[index].newImageFile = e.target.files[0];
               setNewSteps(updated);
             }}
           />
@@ -154,7 +239,12 @@ export default function EditRecipe() {
       ))}
 
       <button onClick={handleUpdate}>Save</button>
-      <button className="cancel-button" onClick={() => navigate(`/recipes/${id}`)}>Cancel</button>
+      <button
+        className="cancel-button"
+        onClick={() => navigate(`/recipes/${id}`)}
+      >
+        Cancel
+      </button>
     </div>
   );
 }

@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from models import db
@@ -38,6 +38,10 @@ app.register_blueprint(routes_cloudinary)
 @app.errorhandler(404)
 def not_found(e):
     return jsonify({"error": "Not Found"}), 404
+
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory('uploads', filename)
 
 
 if __name__ == "__main__":

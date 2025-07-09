@@ -44,11 +44,11 @@ export default function RecipeDetail() {
 
   if (!recipe) return <div>Loading...</div>;
 
-  // ✅ Cloudinary URL이면 그대로, 아니면 로컬 경로 붙이기
+  // ✅ Cloudinary URL 대응: http로 시작하면 그대로 사용
   const getImageSrc = (path) => {
     if (!path) return null;
-    if (path.startsWith("http")) return path;
-    return `${API_URL}/${path}`;
+    if (path.startsWith("http")) return path; // Cloudinary CDN 경로
+    return `${API_URL}/${path}`; // 혹시라도 로컬 경로 대응
   };
 
   return (
@@ -60,7 +60,8 @@ export default function RecipeDetail() {
         <img
           src={getImageSrc(recipe.cover_image_path)}
           alt="Cover"
-          width="300"
+          width="400"
+          style={{ borderRadius: "8px", margin: "1rem 0" }}
         />
       )}
 
@@ -73,7 +74,8 @@ export default function RecipeDetail() {
               <img
                 src={getImageSrc(step.image_path)}
                 alt={`Step ${step.step_number}`}
-                width="200"
+                width="300"
+                style={{ borderRadius: "4px", margin: "0.5rem 0" }}
               />
             )}
             <p>{step.text}</p>
@@ -83,9 +85,11 @@ export default function RecipeDetail() {
         <p>No steps available.</p>
       )}
 
-      <button onClick={handleDelete}>Delete</button>
-      <button onClick={() => navigate(`/recipes/${id}/edit`)}>Edit</button>
-      <button onClick={() => navigate("/recipes")}>Back to List</button>
+      <div className="recipe-detail-buttons" style={{ marginTop: "2rem" }}>
+        <button onClick={handleDelete}>🗑️ Delete</button>
+        <button onClick={() => navigate(`/recipes/${id}/edit`)}>✏️ Edit</button>
+        <button onClick={() => navigate("/recipes")}>🔙 Back to List</button>
+      </div>
     </div>
   );
 }
