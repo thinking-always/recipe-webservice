@@ -20,7 +20,7 @@ export default function Register() {
       .then((data) => {
         console.log("Register Response:", data);
         if (data.success) {
-          alert("회원가입 성공! 로그인해주세요.");
+          alert("회원가입 성공!");
           navigate("/login");
         } else {
           alert("회원가입 실패!");

@@ -2,13 +2,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from models import db
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 import os
+from extensions import bcrypt, SQLAlchemy
+from flask_jwt_extended import JWTManager, create_access_token
 
 
 from models import db
@@ -20,10 +21,14 @@ CORS(app)
 
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
 
-db.init_app(app)
+bcrypt.init_app(app) 
 jwt = JWTManager(app)
+
+db.init_app(app)
+
 
 with app.app_context():
     db.create_all()

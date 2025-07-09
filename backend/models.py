@@ -1,7 +1,8 @@
-from  flask_sqlalchemy import SQLAlchemy
+from  extensions import SQLAlchemy, bcrypt, db
 from datetime import datetime, timezone
 
-db = SQLAlchemy()
+
+
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,3 +58,15 @@ class CalendarEntry(db.Model):
             'date': self.date.isoformat(),
             'recipe_title': self.recipe.title if self.recipe else None
         }
+    
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(120), nullable=False)
+
+    def check_password(self, password):
+        
+        
+        return bcrypt.check_password_hash(self.password_hash, password)
+
+    
