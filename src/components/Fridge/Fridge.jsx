@@ -15,8 +15,13 @@ export default function Fridge() {
   const token = localStorage.getItem("token");
   const API_URL = process.env.REACT_APP_API_URL;
 
+  
+
+ 
+
   // ✅ GET
   useEffect(() => {
+    const token = localStorage.getItem("token");
     if (!token) {
       alert("No token found, please login!");
       window.location.href = "/login";

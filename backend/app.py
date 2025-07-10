@@ -1,14 +1,13 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-
 from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from models import db
 from flask import Flask
 import os
-from extensions import bcrypt, SQLAlchemy
+from extensions import bcrypt, SQLAlchemy, jwt
 from flask_jwt_extended import JWTManager, create_access_token
 
 
@@ -25,8 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
 
 bcrypt.init_app(app) 
-jwt = JWTManager(app)
-
+jwt.init_app(app)
 db.init_app(app)
 
 
