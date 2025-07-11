@@ -7,13 +7,13 @@ from flask_jwt_extended import JWTManager
 from models import db
 from flask import Flask
 import os
-from extensions import bcrypt, SQLAlchemy, jwt
+from extensions import bcrypt, db, jwt, migrate
 from flask_jwt_extended import JWTManager, create_access_token
 from datetime import timedelta
 
 
-from models import db
-from routes import routes_recipes, routes_ingredients, routes_auth, calendar_bp, routes_cloudinary
+
+from routes import routes_recipes, routes_ingredients, routes_auth, calendar_bp, routes_cloudinary, comments_bp
 
 
 app = Flask(__name__)
@@ -31,6 +31,7 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
 bcrypt.init_app(app) 
 jwt.init_app(app)
 db.init_app(app)
+migrate.init_app(app, db)
 
 
 with app.app_context():
@@ -39,8 +40,9 @@ with app.app_context():
 app.register_blueprint(routes_recipes)
 app.register_blueprint(routes_ingredients)
 app.register_blueprint(routes_auth, url_prefix="/auth")
-app.register_blueprint(calendar_bp)
 app.register_blueprint(routes_cloudinary)
+app.register_blueprint(calendar_bp)
+app.register_blueprint(comments_bp)
 
 
 @app.errorhandler(404)
