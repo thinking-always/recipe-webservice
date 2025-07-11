@@ -12,7 +12,7 @@ import Footer from './components/common/Footer';
 import Home from './components/Home/Home';
 import EditRecipe from "./components/Recipes/EditRecipe";
 import Register from "./components/Register";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./components/context/AuthContext";
 
 
 

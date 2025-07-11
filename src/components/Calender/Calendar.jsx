@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useApiFetch } from "../context/apiFetch";  // 경로 네 구조에 맞게 수정
 import "./Calendar.css";
 
 export default function Calendar() {
@@ -9,29 +10,17 @@ export default function Calendar() {
   const [isDragging, setIsDragging] = useState(false);
   const [entries, setEntries] = useState([]);
 
+  const apiFetch = useApiFetch();
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchCalendarEntries();
     // eslint-disable-next-line
-  }, [year, month]); 
+  }, [year, month]);
 
   async function fetchCalendarEntries() {
-    const token = localStorage.getItem("token"); 
-    console.log("👉 [fetch] Calendar 토큰:", token);
-
-    if (!token) {
-      console.log("Token 없음 → 캘린더 fetch 스킵");
-      return;
-    }
-
-    const res = await fetch(
-      `${API_URL}/calendar?year=${year}&month=${month + 1}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const res = await apiFetch(
+      `${API_URL}/calendar?year=${year}&month=${month + 1}`
     );
 
     const data = await res.json();
@@ -53,13 +42,6 @@ export default function Calendar() {
   }
 
   async function generateRandomMeals() {
-    const token = localStorage.getItem("token"); 
-
-    if (!token) {
-      alert("로그인 후 이용해주세요!");
-      return;
-    }
-
     if (selectedDates.length === 0) {
       alert("날짜를 선택하세요!");
       return;
@@ -73,12 +55,8 @@ export default function Calendar() {
 
     console.log("클린된 날짜:", cleanDates);
 
-    const res = await fetch(`${API_URL}/calendar/random`, {
+    const res = await apiFetch(`${API_URL}/calendar/random`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({ dates: cleanDates }),
     });
 

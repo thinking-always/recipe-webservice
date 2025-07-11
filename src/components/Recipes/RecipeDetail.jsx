@@ -22,7 +22,7 @@ export default function RecipeDetail() {
         alert("레시피 정보를 불러오지 못했습니다.");
         navigate("/recipes");
       });
-  }, [id, API_URL, navigate, apiFetch]);
+  }, [id, API_URL, navigate]);
 
   const handleDelete = async () => {
     if (!window.confirm("정말로 이 레시피를 삭제할까요?")) return;

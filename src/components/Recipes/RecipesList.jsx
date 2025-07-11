@@ -15,7 +15,7 @@ export default function RecipesList() {
       .then(res => res.json())
       .then(setRecipes)
       .catch(err => console.error(err));
-  }, [API_URL, apiFetch]);
+  }, [API_URL]);
 
   // ✅ Cloudinary URL이면 그대로 반환
   // ✅ 혹시라도 로컬 URL이면 fallback으로 API_URL 붙임

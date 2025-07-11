@@ -34,7 +34,7 @@ export default function EditRecipe() {
           }))
         );
       });
-  }, [id, API_URL, apiFetch]);
+  }, [id, API_URL]);
 
   // ✅ Cloudinary Direct Upload 함수
   async function uploadToCloudinary(file) {

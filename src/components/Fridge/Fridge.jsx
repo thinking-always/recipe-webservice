@@ -57,7 +57,7 @@ export default function Fridge() {
         }
         setPantryItems(data);
       });
-  }, [apiFetch]);
+  }, []);
 
   // ✅ POST (fridge만 예시)
   const addItem = () => {

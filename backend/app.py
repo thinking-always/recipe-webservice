@@ -17,7 +17,8 @@ from routes import routes_recipes, routes_ingredients, routes_auth, calendar_bp,
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
 
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
@@ -37,7 +38,7 @@ with app.app_context():
 
 app.register_blueprint(routes_recipes)
 app.register_blueprint(routes_ingredients)
-app.register_blueprint(routes_auth)
+app.register_blueprint(routes_auth, url_prefix="/auth")
 app.register_blueprint(calendar_bp)
 app.register_blueprint(routes_cloudinary)
 

@@ -18,7 +18,7 @@ export default function Home() {
     apiFetch(`${API_URL}/recipes/latest`)
       .then((res) => res.json())
       .then((data) => setLatest(data));
-  }, [API_URL, apiFetch]);
+  }, [API_URL]);
 
   return (
     <div className="home-container">

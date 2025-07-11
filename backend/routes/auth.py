@@ -1,6 +1,6 @@
 # routes/auth.py
 from flask import Blueprint, request, jsonify
-from flask_cors import cross_origin
+from flask_cors import cross_origin, CORS
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from models import User, db
 from extensions import bcrypt  
@@ -27,9 +27,11 @@ def register():
     
     return jsonify({'success': True, 'msg': 'User registered successfully'}), 201
 
-@routes_auth.route("/login", methods=['POST'])
+@routes_auth.route("/login", methods=['POST', 'OPTIONS'])
 @cross_origin()
 def login():
+    if request.method == 'OPTIONS':
+        return "", 200
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
