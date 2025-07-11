@@ -17,7 +17,8 @@ from routes import routes_recipes, routes_ingredients, routes_auth, calendar_bp,
 
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "https://recipe-webservice.vercel.app"}})
+
 
 
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')

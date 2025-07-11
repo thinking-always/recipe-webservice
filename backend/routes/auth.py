@@ -7,8 +7,13 @@ from extensions import bcrypt
 
 routes_auth = Blueprint('routes_auth', __name__)
 
-@routes_auth.route("/register", methods=['POST'])
+CORS(routes_auth, resources={r"/*": {"origins": "https://recipe-webservice.vercel.app"}})
+
+@routes_auth.route("/register", methods=['POST', "OPTIONS"])
+@cross_origin(origin="https://recipe-webservice.vercel.app")
 def register():
+    if request.method == 'OPTIONS':
+        return "", 200
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
@@ -28,7 +33,7 @@ def register():
     return jsonify({'success': True, 'msg': 'User registered successfully'}), 201
 
 @routes_auth.route("/login", methods=['POST', 'OPTIONS'])
-@cross_origin()
+@cross_origin(origin="https://recipe-webservice.vercel.app")
 def login():
     if request.method == 'OPTIONS':
         return "", 200
