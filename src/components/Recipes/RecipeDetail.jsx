@@ -9,6 +9,8 @@ export default function RecipeDetail() {
   const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const apiFetch = useApiFetch();
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     apiFetch(`${API_URL}/recipes/${id}`)
@@ -22,6 +24,11 @@ export default function RecipeDetail() {
         alert("레시피 정보를 불러오지 못했습니다.");
         navigate("/recipes");
       });
+
+    apiFetch(`${API_URL}/comments/${id}`)
+      .then((res) => res.json())
+      .then((data) => setComments(data))
+      .catch((err) => console.error("fail to bring comment", err));  
   }, [id, API_URL, navigate]);
 
   const handleDelete = async () => {
@@ -46,6 +53,24 @@ export default function RecipeDetail() {
   }
 
   if (!recipe) return <div>Loading...</div>;
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    const res = await apiFetch(`${API_URL}/comments`, {
+      method: "POST",
+      body: JSON.stringify({ recipe_id: id, content: newComment}),
+    });
+
+    if (res.ok) {
+      const added = await res.json();
+      setComments([added, ...comments]);
+      setNewComment("");
+    } else {
+      alert("fail to add comment");
+    }
+  };
 
   // ✅ Cloudinary URL 대응: http로 시작하면 그대로 사용
   const getImageSrc = (path) => {
@@ -93,6 +118,39 @@ export default function RecipeDetail() {
         <button onClick={() => navigate(`/recipes/${id}/edit`)}>✏️ Edit</button>
         <button onClick={() => navigate("/recipes")}>🔙 Back to List</button>
       </div>
+
+      <div className="recipe-comments">
+        <h2>Comments</h2>
+
+        <form onSubmit={handleCommentSubmit}>
+          <textarea
+          rows="3"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Comment"
+          />
+          <button type="submit">
+            Add Comment
+          </button>
+        </form>
+
+        {comments.length === 0 ? (
+          <p>No comments</p>
+        ) : (
+          <ul>
+            {comments.map((c) => (
+              <li
+              key={c.id}
+              >
+                <p>{c.content}</p>
+                <small>{new Date(c.created_at).toLocaleString()}</small>
+              </li>
+            ))}
+          </ul>
+        )
+        }
+      </div>
+
     </div>
   );
 }
