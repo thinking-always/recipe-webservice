@@ -12,30 +12,30 @@ import Footer from './components/common/Footer';
 import Home from './components/Home/Home';
 import EditRecipe from "./components/Recipes/EditRecipe";
 import Register from "./components/Register";
-
+import { AuthProvider } from "./context/AuthContext";
 
 
 
 function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/recipes" element={<RecipesList />} />
-        <Route path="/recipes/add" element={<AddRecipe />} />
-        <Route path="/recipes/:id" element={<RecipeDetail />} />
-        <Route path="/recipes/:id/edit" element={<EditRecipe />} />
-        <Route path="/fridge" element={<Fridge />} />
-        <Route path="/calendar" element={<Calender />} />
-        <Route path="/Feedback" element={<Feedback />} />
-        <Route path='/login' element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/recipes" element={<RecipesList />} />
+          <Route path="/recipes/add" element={<AddRecipe />} />
+          <Route path="/recipes/:id" element={<RecipeDetail />} />
+          <Route path="/recipes/:id/edit" element={<EditRecipe />} />
+          <Route path="/fridge" element={<Fridge />} />
+          <Route path="/calendar" element={<Calender />} />
+          <Route path="/Feedback" element={<Feedback />} />
+          <Route path='/login' element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </AuthProvider >
   );
 }
 

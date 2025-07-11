@@ -1,16 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import './RecipeDetail.css';
+import { useApiFetch } from "../context/apiFetch";
 
 export default function RecipeDetail() {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const apiFetch = useApiFetch();
 
   useEffect(() => {
-    fetch(`${API_URL}/recipes/${id}`)
+    apiFetch(`${API_URL}/recipes/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -21,26 +22,28 @@ export default function RecipeDetail() {
         alert("레시피 정보를 불러오지 못했습니다.");
         navigate("/recipes");
       });
-  }, [id, API_URL, navigate]);
+  }, [id, API_URL, navigate, apiFetch]);
 
   const handleDelete = async () => {
     if (!window.confirm("정말로 이 레시피를 삭제할까요?")) return;
 
-    const res = await fetch(`${API_URL}/recipes/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await apiFetch(`${API_URL}/recipes/${id}`, {
+        method: "DELETE",
+      });
 
-    if (res.ok) {
-      alert("레시피가 삭제되었습니다.");
-      navigate("/recipes");
-    } else {
-      console.error("삭제 실패");
-      alert("삭제 실패");
+      if (res.ok) {
+        alert("레시피가 삭제되었습니다.");
+        navigate("/recipes");
+      } else {
+        console.error("삭제 실패");
+        alert("삭제 실패");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("server error. failed to delete")
     }
-  };
+  }
 
   if (!recipe) return <div>Loading...</div>;
 

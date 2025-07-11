@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Fridge.css";
+import { useApiFetch } from "../context/apiFetch";
 
 export default function Fridge() {
   const [items, setItems] = useState([]);
@@ -12,26 +13,15 @@ export default function Fridge() {
   const [showModal, setShowModal] = useState(false);
   const [activeSection, setActiveSection] = useState("fridge");
 
-  const token = localStorage.getItem("token");
+  const apiFetch = useApiFetch();
   const API_URL = process.env.REACT_APP_API_URL;
 
   
 
- 
-
   // ✅ GET
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("No token found, please login!");
-      window.location.href = "/login";
-      return;
-    }
-
-    fetch(`${API_URL}/fridge`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    apiFetch(`${API_URL}/fridge`, {
+      
     })
       .then((res) => {
         if (res.status === 401) {
@@ -49,10 +39,8 @@ export default function Fridge() {
         setItems(data);
       });
 
-    fetch(`${API_URL}/pantry`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  apiFetch(`${API_URL}/pantry`, {
+      
     })
       .then((res) => {
         if (res.status === 401) {
@@ -69,16 +57,12 @@ export default function Fridge() {
         }
         setPantryItems(data);
       });
-  }, []);
+  }, [apiFetch]);
 
   // ✅ POST (fridge만 예시)
   const addItem = () => {
-    fetch(`${API_URL}/ingredients`, {
+    apiFetch(`${API_URL}/ingredients`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({
         name: name,
         quantity: parseFloat(quantity),
@@ -107,11 +91,8 @@ export default function Fridge() {
 
   // ✅ DELETE (fridge만 예시)
   const deleteItem = (id) => {
-    fetch(`${API_URL}/ingredients/${id}`, {
+    apiFetch(`${API_URL}/ingredients/${id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     })
       .then((response) => {
         if (!response.ok) {
@@ -140,12 +121,8 @@ export default function Fridge() {
   const saveEdit = () => {
     if (!editingId) return;
 
-    fetch(`${API_URL}/ingredients/${editingId}`, {
+    apiFetch(`${API_URL}/ingredients/${editingId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({
         name: name,
         quantity: parseFloat(quantity),

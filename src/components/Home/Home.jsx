@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
+import { useApiFetch } from "../context/apiFetch";
 
 export default function Home() {
   const [popular, setPopular] = useState([]);
   const [latest, setLatest] = useState([]);
+  const apiFetch = useApiFetch();
 
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    fetch(`${API_URL}/recipes/popular`)
+    apiFetch(`${API_URL}/recipes/popular`)
       .then((res) => res.json())
       .then((data) => setPopular(data));
 
-    fetch(`${API_URL}/recipes/latest`)
+    apiFetch(`${API_URL}/recipes/latest`)
       .then((res) => res.json())
       .then((data) => setLatest(data));
-  }, [API_URL]);
+  }, [API_URL, apiFetch]);
 
   return (
     <div className="home-container">

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./AddRecipe.css";
+import { useApiFetch } from "../context/apiFetch";
 
 export default function AddRecipe() {
   const [title, setTitle] = useState("");
@@ -16,13 +16,13 @@ export default function AddRecipe() {
   });
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const apiFetch = useApiFetch();
   const API_URL = process.env.REACT_APP_API_URL;
 
   // ✅ Cloudinary Direct Upload 공통 함수
   async function uploadToCloudinary(file) {
     // 1️⃣ 서버에서 signature 발급 받기
-    const sigRes = await fetch(`${API_URL}/uploader/signature`);
+    const sigRes = await apiFetch(`${API_URL}/uploader/signature`);
     const sigData = await sigRes.json();
 
     const formData = new FormData();
@@ -93,12 +93,19 @@ export default function AddRecipe() {
     const stepImagesUrls = [];
     for (let step of steps) {
       if (step.image) {
-        const url = await uploadToCloudinary(step.image);
-        stepImagesUrls.push(url);
+        try {
+          const url = await uploadToCloudinary(step.image);
+          stepImagesUrls.push(url);
+        } catch (err) {
+          console.error(err);
+          alert(`Step image upload failed`);
+          return; // 실패하면 전체 저장 중단
+        }
       } else {
         stepImagesUrls.push("");
       }
     }
+
 
     const formData = new FormData();
     formData.append("title", title.trim());
@@ -111,11 +118,8 @@ export default function AddRecipe() {
     });
 
     try {
-      const res = await fetch(`${API_URL}/recipes`, {
+      const res = await apiFetch(`${API_URL}/recipes`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formData,
       });
 

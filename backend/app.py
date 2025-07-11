@@ -9,6 +9,7 @@ from flask import Flask
 import os
 from extensions import bcrypt, SQLAlchemy, jwt
 from flask_jwt_extended import JWTManager, create_access_token
+from datetime import timedelta
 
 
 from models import db
@@ -22,6 +23,9 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=7)
+
 
 bcrypt.init_app(app) 
 jwt.init_app(app)

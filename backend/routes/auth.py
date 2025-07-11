@@ -1,7 +1,7 @@
 # routes/auth.py
 from flask import Blueprint, request, jsonify
 from flask_cors import cross_origin
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from models import User, db
 from extensions import bcrypt  
 
@@ -37,7 +37,21 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if user and user.check_password(password):
-        access_token = create_access_token(identity=user.id)  
-        return jsonify(access_token=access_token), 200
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=str(user.id))
+        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
     else:
         return jsonify({"msg": "failed login"}), 401
+
+@routes_auth.route("/refresh", methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    current_user = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user)
+    return jsonify(access_token=new_access_token), 200
+
+@routes_auth.route("/protected", methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200

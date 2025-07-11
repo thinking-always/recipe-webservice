@@ -1,12 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import './EditRecipe.css';
+import { useApiFetch } from "../context/apiFetch";
 
 export default function EditRecipe() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const apiFetch = useApiFetch();
   const API_URL = process.env.REACT_APP_API_URL;
-  const token = localStorage.getItem("token");
 
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -19,7 +20,7 @@ export default function EditRecipe() {
   const [newStepImage, setNewStepImage] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/recipes/${id}`)
+    apiFetch(`${API_URL}/recipes/${id}`)
       .then(res => res.json())
       .then(data => {
         setNewTitle(data.title);
@@ -33,11 +34,11 @@ export default function EditRecipe() {
           }))
         );
       });
-  }, [id, API_URL]);
+  }, [id, API_URL, apiFetch]);
 
   // ✅ Cloudinary Direct Upload 함수
   async function uploadToCloudinary(file) {
-    const sigRes = await fetch(`${API_URL}/uploader/signature`);
+    const sigRes = await apiFetch(`${API_URL}/uploader/signature`);
     const sigData = await sigRes.json();
 
     const formData = new FormData();
@@ -80,18 +81,32 @@ export default function EditRecipe() {
     let coverImageUrl = newCoverImageUrl;
 
     if (newCoverImageFile) {
-      coverImageUrl = await uploadToCloudinary(newCoverImageFile);
+      try {
+        coverImageUrl = await uploadToCloudinary(newCoverImageFile);
+      } catch (err) {
+        console.error(err);
+        alert("Cover image upload failed");
+        return; // 업로드 실패면 저장 못 가게 중단
+      }
     }
+
 
     const stepImageUrls = [];
     for (let step of newSteps) {
       if (step.newImageFile) {
-        const url = await uploadToCloudinary(step.newImageFile);
-        stepImageUrls.push(url);
+        try {
+          const url = await uploadToCloudinary(step.newImageFile);
+          stepImageUrls.push(url);
+        } catch (err) {
+          console.error(err);
+          alert(`Step image upload failed`);
+          return; // 하나라도 실패하면 전체 Update 중단
+        }
       } else {
         stepImageUrls.push(step.imagePath || "");
       }
     }
+
 
     const formData = new FormData();
     formData.append("title", newTitle);
@@ -102,19 +117,19 @@ export default function EditRecipe() {
       formData.append("stepTexts", step.text);
       formData.append("stepImageUrls", stepImageUrls[idx]);
     });
-
-    await fetch(`${API_URL}/recipes/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then(() => {
-        alert("Updated!");
-        navigate(`/recipes/${id}`);
+    try {
+      const res = await apiFetch(`${API_URL}/recipes/${id}`, {
+        method: "PUT",
+        body: formData,
       });
+
+      const data = await res.json();
+      alert("Updated!");
+      navigate(`/recipes/${id}`);
+    } catch (err) {
+      console.error(err);
+      alert("Update failed")
+    }
   };
 
   // ✅ 스텝 추가
@@ -123,18 +138,22 @@ export default function EditRecipe() {
 
     let stepImageUrl = "";
     if (newStepImage) {
-      stepImageUrl = await uploadToCloudinary(newStepImage);
+      try {
+        stepImageUrl = await uploadToCloudinary(newStepImage);
+      } catch (err) {
+        console.error(err);
+        alert("Step image upload failed");
+        return; // 실패하면 Step 추가 중단
+      }
     }
+
 
     const formData = new FormData();
     formData.append("stepText", newStepText);
     formData.append("stepImageUrl", stepImageUrl);
 
-    await fetch(`${API_URL}/recipes/${id}/steps`, {
+    await apiFetch(`${API_URL}/recipes/${id}/steps`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       body: formData,
     })
       .then((res) => res.json())

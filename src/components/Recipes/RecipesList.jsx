@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApiFetch } from "../context/apiFetch"
 import "./RecipesList.css";
 
 export default function RecipesList() {
   const navigate = useNavigate();
+  const apiFetch = useApiFetch();
   const [recipes, setRecipes] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
 
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch(`${API_URL}/recipes`)
+    apiFetch(`${API_URL}/recipes`)
       .then(res => res.json())
       .then(setRecipes)
       .catch(err => console.error(err));
-  }, [API_URL]);
+  }, [API_URL, apiFetch]);
 
   // ✅ Cloudinary URL이면 그대로 반환
   // ✅ 혹시라도 로컬 URL이면 fallback으로 API_URL 붙임
@@ -29,9 +30,8 @@ export default function RecipesList() {
       return alert("이미 좋아요 했어요!");
     }
 
-    fetch(`${API_URL}/recipes/${id}/like`, {
+    apiFetch(`${API_URL}/recipes/${id}/like`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
       .then(data => {
